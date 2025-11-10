@@ -9,3 +9,10 @@ Thumbs.db
 
 # Node etc
 node_modules/
+
+# Editor files
+.vscode/
+.idea/
+
+# Git submodules helper
+themes/hugo-PaperMod
