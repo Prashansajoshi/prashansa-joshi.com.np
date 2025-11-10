@@ -1,0 +1,211 @@
+/* Background */
+body {
+  background: #0b0f17;
+  color: #e8eef5;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+a {
+  color: #58a6ff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1, h2, h3, h4, h5 {
+  color: #ffffff;
+}
+
+p {
+  color: #cbd5e1;
+}
+
+:root {
+  --hero-width: 920px;
+  --hero-gap: 24px;
+  --accent: #0b6efd;
+  --text-max-width: 680px;
+}
+
+.home-hero {
+  display: block;
+  padding: 48px 16px;
+}
+
+.home-hero .hero-inner {
+  max-width: var(--hero-width);
+  margin: 0 auto;
+  display: flex;
+  gap: var(--hero-gap);
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.hero-photo {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5), 0 0 0 2px rgba(255,255,255,0.05);
+  flex-shrink: 0;
+}
+
+.hero-text h1 {
+  margin: 0 0 8px 0;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
+.hero-text p {
+  margin: 4px 0;
+  max-width: var(--text-max-width);
+  line-height: 1.6;
+  color: #2b2b2b;
+}
+
+.recent-posts {
+  max-width: var(--hero-width);
+  margin: 60px auto 0 auto;
+  padding: 0 16px;
+}
+
+.recent-posts h2 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+}
+
+.recent-posts article {
+  margin-bottom: 1.5rem;
+}
+
+.recent-posts a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.recent-posts a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 720px) {
+  .home-hero .hero-inner {
+    flex-direction: column;
+    text-align: center;
+  }
+  .hero-photo {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+/* Profile Photo */
+.hero-photo {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(12,18,26,0.06);
+  flex-shrink: 0;
+}
+
+/* Teck Stack */
+.tech-stack {
+  max-width: 920px;
+  margin: 40px auto;
+  padding: 0 16px;
+}
+.tech-stack h2 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+}
+.tech-stack ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.tech-stack li {
+  background: #f3f4f6;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #333;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Contact Information */
+.contact {
+  max-width: 920px;
+  margin: 60px auto;
+  padding: 0 16px 80px;
+}
+.contact h2 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+.contact ul {
+  list-style: none;
+  padding: 0;
+}
+.contact a {
+  color: #0b6efd;
+  text-decoration: none;
+}
+.contact a:hover {
+  text-decoration: underline;
+}
+
+/* dark theme rules */
+:root { --bg-dark: #0b0f17; --panel: rgba(255,255,255,0.03); --text: #e8eef5; --muted: #9fb7d6; --accent: #58a6ff; }
+
+html.dark, body.dark {
+  background: var(--bg-dark) !important;
+  color: var(--text) !important;
+}
+
+/* links */
+html.dark a, body.dark a {
+  color: var(--accent) !important;
+}
+
+/* hero and photo */
+html.dark .wrap {
+  background: transparent;
+}
+html.dark .photo {
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6), 0 0 0 2px rgba(255,255,255,0.02);
+  border-radius: 10px;
+}
+
+/* headings and paragraphs */
+html.dark h1, html.dark h2, html.dark h3 {
+  color: #ffffff !important;
+}
+html.dark p, html.dark li {
+  color: var(--muted) !important;
+}
+
+/* contact list bullets */
+html.dark .contact ul li {
+  color: var(--muted);
+}
+
+/* resume button if present */
+html.dark .btn-resume {
+  background: #1f6feb !important;
+  color: #fff !important;
+  box-shadow: 0 8px 20px rgba(31,111,235,0.18);
+}
+
+/* nav link contrast */
+html.dark nav a {
+  color: var(--accent) !important;
+}
+
+/* small transition so change is smooth */
+html, body, .wrap, .photo, .btn-resume {
+  transition: background 220ms ease, color 220ms ease, box-shadow 220ms ease, transform 160ms ease;
+}

@@ -1,0 +1,79 @@
+/* custom dark mode rules served from /css/custom.css */
+:root {
+  --bg-dark: #0b0f17;
+  --text: #e8eef5;
+  --muted: #9fb7d6;
+  --accent: #58a6ff;
+}
+
+/* default light values (so both themes are covered) */
+body {
+  background: #ffffff;
+  color: #111111;
+  transition: background 220ms ease, color 220ms ease;
+}
+
+/* when the html or body has class "dark" these rules apply */
+html.dark, body.dark {
+  background: var(--bg-dark) !important;
+  color: var(--text) !important;
+}
+
+/* links */
+html.dark a, body.dark a {
+  color: var(--accent) !important;
+}
+
+/* hero photo */
+html.dark .photo {
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6), 0 0 0 2px rgba(255,255,255,0.02);
+  border-radius: 10px;
+}
+
+/* headings and paragraphs */
+html.dark h1, html.dark h2, html.dark h3 {
+  color: #ffffff !important;
+}
+html.dark p, html.dark li {
+  color: var(--muted) !important;
+}
+
+/* nav link contrast */
+html.dark nav a {
+  color: var(--accent) !important;
+}
+
+/* resume button if present */
+html.dark .btn-resume {
+  background: #1f6feb !important;
+  color: #fff !important;
+  box-shadow: 0 8px 20px rgba(31,111,235,0.18);
+}
+
+/* smooth transitions */
+html, body, .wrap, .photo, .btn-resume {
+  transition: background 220ms ease, color 220ms ease, box-shadow 220ms ease, transform 160ms ease;
+}
+
+/* STRONG DARK OVERRIDES (added) */
+html.dark, body.dark {
+  background: #0b0f17 !important;
+  color: #e8eef5 !important;
+}
+html.dark body, body.dark, html.dark .wrap {
+  background: #0b0f17 !important;
+  color: #e8eef5 !important;
+}
+html.dark h1, html.dark h2, html.dark h3, body.dark h1, body.dark h2, body.dark h3 {
+  color: #ffffff !important;
+}
+html.dark p, body.dark p, html.dark li, body.dark li {
+  color: #9fb7d6 !important;
+}
+html.dark a, body.dark a, html.dark nav a, body.dark nav a {
+  color: #58a6ff !important;
+}
+html.dark .photo, body.dark .photo {
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6) !important;
+  border-radius: 10px !important;
+}

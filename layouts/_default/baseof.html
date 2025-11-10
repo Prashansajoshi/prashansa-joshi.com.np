@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{{ .Title }} - Prashansa Joshi</title>
+  <link rel="stylesheet" href="/css/custom.css">
+</head>
+<body>
+  <header style="padding:20px 60px; text-align:right;">
+    <a href="/" style="color:#58a6ff; text-decoration:none; margin-right:20px;">Home</a>
+    <a href="/blogs/" style="color:#58a6ff; text-decoration:none;">Blogs</a>
+  </header>
+
+  <main>
+    {{ block "main" . }}{{ .Content }}{{ end }}
+  </main>
+
+  <script src="/js/theme-toggle.js"></script>
+</body>
+</html>

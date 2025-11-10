@@ -1,0 +1,21 @@
+{{ define "main" }}
+  <main class="container" role="main">
+    <header>
+      <h1>{{ .Title }}</h1>
+      {{ with .Description }}<p>{{ . }}</p>{{ end }}
+    </header>
+
+    <section class="post-list">
+      {{ range .Paginator.Pages }}
+        <article class="post-excerpt">
+          <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+          {{ with .Params.date }}<time datetime="{{ . }}">{{ . }}</time>{{ end }}
+          <p>{{ .Summary }}</p>
+          <p><a href="{{ .RelPermalink }}">Read</a></p>
+        </article>
+      {{ end }}
+    </section>
+
+    {{ partial "pagination.html" . }}
+  </main>
+{{ end }}
