@@ -1,10 +1,89 @@
-<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>My First Blog - Prashansa Joshi</title><style>body{font-family:Inter,system-ui,-apple-system,segoe ui,Roboto,Arial;margin:0;background:#0b0f17;color:#e8eef5}.wrap{max-width:1e3px;margin:80px auto;padding:0 60px;display:flex;flex-direction:column}header{text-align:right;margin-bottom:40px}header a{color:#58a6ff;text-decoration:none;margin-left:18px;font-size:1rem}header a:hover{text-decoration:underline}.post-title{font-size:2.4rem;color:#fff;margin:8px 0 12px}.meta{color:#9fb7d6;margin-bottom:20px}.content{background:rgba(255,255,255,1%);padding:24px;border-radius:12px;color:#cbd5e1;line-height:1.85;box-shadow:0 8px 30px rgba(0,0,0,.6)}.back{margin-top:18px}.back a{color:#58a6ff;text-decoration:none}@media(max-width:768px){.wrap{padding:0 24px}}</style></head><body><div class=wrap><header><a href=/>Home</a>
-<a href=/blogs/>Blogs</a></header><article><h1 class=post-title>My First Blog</h1><div class=meta>Nov 9, 2025</div><div class=content><p>In today&rsquo;s cloud landscape, managing AWS costs is key to efficiency and cutting waste. The CUDOS Dashboard (Cost and Usage Dashboard Operations Solution) is an open-source tool in AWS Cloud Intelligence Dashboards. It uses AWS Cost and Usage Reports (CUR) to offer detailed insights, recommendations, and visuals to optimize costs. This blog guides you through deploying CUDOS, its architecture, core services, and customizing it with user-defined tags, based on practical use and official AWS resources.</p><h1 id=introduction-to-cudos>Introduction to CUDOS</h1><p>CUDOS transforms raw CUR data into actionable intelligence using services like AWS Glue for data integration, Athena for querying, and QuickSight for visualizations. It offers high-level overviews alongside deep dives into usage patterns, supporting multi-account setups in AWS Organizations. Key benefits include ML-driven recommendations for rightsizing, reservations, and AWS Marketplace spend analysis.</p><p>The CUR provides comprehensive metadata on services, pricing, Reserved Instances, and Savings Plans, making it the foundation for CUDOS. AWS Glue prepares this data, Athena analyzes it, and QuickSight delivers interactive dashboards.</p><h1 id=prerequisites>Prerequisites</h1><p>Before diving in, ensure you have:</p><ul><li><p>Permissions: Admin access in your Management/Payer Account for CloudFormation, CUR, Athena, Glue, IAM, Lambda, QuickSight, and S3. All roles and policies are managed via templates.</p></li><li><p>AWS Setup: Enable CUR with Athena integration. For multi-payer environments, prepare a Data Collection Account.</p></li><li><p>Tools: Terraform for deployment (optional but recommended for automation), or use CloudFormation directly.</p></li><li><p>Time Considerations: CUR reports take up to 24 hours to generate; dashboard data appears shortly after.</p></li></ul><p>No costs beyond standard AWS usage apply. QuickSight&rsquo;s SPICE engine efficiently handles queries.</p><h1 id=architecture-overview>Architecture Overview</h1><ul><li><p>CUDOS architecture centers on CUR data flowing through a serverless pipeline:</p></li><li><p>CUR reports are delivered to an S3 bucket.</p></li><li><p>Glue crawlers index the data, creating tables in the Glue Data Catalog.</p></li><li><p>Athena runs predefined queries to generate views.</p></li><li><p>QuickSight datasets pull from these views for dashboard rendering.</p></li></ul><p><img alt="alt text" loading=lazy src=image.png>
+<!doctype html>
+<html lang="en">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>My First Blog - Prashansa Joshi</title>
+  <style>
+    body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; margin: 0; background: #0b0f17; color: #e8eef5; }
+    .wrap { max-width: 1000px; margin: 80px auto; padding: 0 60px; display: flex; flex-direction: column; }
+    header { text-align: right; margin-bottom: 40px; }
+    header a { color:#58a6ff; text-decoration:none; margin-left:18px; font-size:1rem; }
+    header a:hover { text-decoration:underline; }
+
+    .post-title { font-size:2.4rem; color:#fff; margin: 8px 0 12px 0; }
+    .meta { color:#9fb7d6; margin-bottom:20px; }
+    .content { background: rgba(255,255,255,0.01); padding:24px; border-radius:12px; color:#cbd5e1; line-height:1.85; box-shadow: 0 8px 30px rgba(0,0,0,0.6); }
+    .back { margin-top:18px; }
+    .back a { color:#58a6ff; text-decoration:none; }
+    @media (max-width:768px) { .wrap { padding: 0 24px } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a href="/">Home</a>
+      <a href="/blogs/">Blogs</a>
+    </header>
+
+    <article>
+      <h1 class="post-title">My First Blog</h1>
+      <div class="meta">Nov 9, 2025</div>
+
+      <div class="content">
+        <p>In today&rsquo;s cloud landscape, managing AWS costs is key to efficiency and cutting waste. The CUDOS Dashboard (Cost and Usage Dashboard Operations Solution) is an open-source tool in AWS Cloud Intelligence Dashboards. It uses AWS Cost and Usage Reports (CUR) to offer detailed insights, recommendations, and visuals to optimize costs. This blog guides you through deploying CUDOS, its architecture, core services, and customizing it with user-defined tags, based on practical use and official AWS resources.</p>
+<h1 id="introduction-to-cudos">Introduction to CUDOS</h1>
+<p>CUDOS transforms raw CUR data into actionable intelligence using services like AWS Glue for data integration, Athena for querying, and QuickSight for visualizations. It offers high-level overviews alongside deep dives into usage patterns, supporting multi-account setups in AWS Organizations. Key benefits include ML-driven recommendations for rightsizing, reservations, and AWS Marketplace spend analysis.</p>
+<p>The CUR provides comprehensive metadata on services, pricing, Reserved Instances, and Savings Plans, making it the foundation for CUDOS. AWS Glue prepares this data, Athena analyzes it, and QuickSight delivers interactive dashboards.</p>
+<h1 id="prerequisites">Prerequisites</h1>
+<p>Before diving in, ensure you have:</p>
+<ul>
+<li>
+<p>Permissions: Admin access in your Management/Payer Account for CloudFormation, CUR, Athena, Glue, IAM, Lambda, QuickSight, and S3. All roles and policies are managed via templates.</p>
+</li>
+<li>
+<p>AWS Setup: Enable CUR with Athena integration. For multi-payer environments, prepare a Data Collection Account.</p>
+</li>
+<li>
+<p>Tools: Terraform for deployment (optional but recommended for automation), or use CloudFormation directly.</p>
+</li>
+<li>
+<p>Time Considerations: CUR reports take up to 24 hours to generate; dashboard data appears shortly after.</p>
+</li>
+</ul>
+<p>No costs beyond standard AWS usage apply. QuickSight&rsquo;s SPICE engine efficiently handles queries.</p>
+<h1 id="architecture-overview">Architecture Overview</h1>
+<ul>
+<li>
+<p>CUDOS architecture centers on CUR data flowing through a serverless pipeline:</p>
+</li>
+<li>
+<p>CUR reports are delivered to an S3 bucket.</p>
+</li>
+<li>
+<p>Glue crawlers index the data, creating tables in the Glue Data Catalog.</p>
+</li>
+<li>
+<p>Athena runs predefined queries to generate views.</p>
+</li>
+<li>
+<p>QuickSight datasets pull from these views for dashboard rendering.</p>
+</li>
+</ul>
+<p><img alt="alt text" loading="lazy" src="image.png">
 fig: Architecture of the CUDOS dashboard implementation
-For multi-account scenarios, replicate CUR data from the Payer Account to the Data Collection Account using S3 replication rules.</p><h1 id=deployment-workflow>Deployment Workflow</h1><p>Deployment is streamlined via Terraform wrappers around CloudFormation, ensuring reproducibility.</p><p><strong>Step 1: Set Up CUR in the Payer Account</strong></p><p>Create an S3 bucket and CUR report:</p><pre tabindex=0><code> module &#34;cur_payer&#34; {
+For multi-account scenarios, replicate CUR data from the Payer Account to the Data Collection Account using S3 replication rules.</p>
+<h1 id="deployment-workflow">Deployment Workflow</h1>
+<p>Deployment is streamlined via Terraform wrappers around CloudFormation, ensuring reproducibility.</p>
+<p><strong>Step 1: Set Up CUR in the Payer Account</strong></p>
+<p>Create an S3 bucket and CUR report:</p>
+<pre tabindex="0"><code> module &#34;cur_payer&#34; {
   source = &#34;../../modules/cur-source&#34;
 }
-</code></pre><p>This provisions the bucket with necessary permissions for multi-payer support.</p><p><strong>Step 2: Deploy CUDOS in the Data Collection Account</strong></p><p>Use the CID module:</p><pre tabindex=0><code>module &#34;cid_dashboard&#34; {
+</code></pre><p>This provisions the bucket with necessary permissions for multi-payer support.</p>
+<p><strong>Step 2: Deploy CUDOS in the Data Collection Account</strong></p>
+<p>Use the CID module:</p>
+<pre tabindex="0"><code>module &#34;cid_dashboard&#34; {
   source          = &#34;../../modules/cudos-dashboard&#34;
   stack_name      = &#34;CUDOS-STACK&#34;
   template_bucket = &#34;your-template-bucket&#34; #Must exist
@@ -18,7 +97,10 @@ For multi-account scenarios, replicate CUR data from the Payer Account to the Da
     &#34;CURBucketPath&#34;                      = &#34;s3://your-cur-bucket/path&#34;
   }
 }
-</code></pre><p>This deploys Glue crawlers, Athena views, Lambda functions, and QuickSight dashboards. Wait 24 hours for initial data population. Schedules for crawlers and datasets ensure regular updates.</p><p>Post-deployment, access QuickSight, select the &ldquo;CUDOS Dashboard v5,&rdquo; and explore visualizations. Avoid paginated reports to control costs.</p><h2 id=validate-deployment>Validate Deployment</h2><pre tabindex=0><code># Check outputs
+</code></pre><p>This deploys Glue crawlers, Athena views, Lambda functions, and QuickSight dashboards. Wait 24 hours for initial data population. Schedules for crawlers and datasets ensure regular updates.</p>
+<p>Post-deployment, access QuickSight, select the &ldquo;CUDOS Dashboard v5,&rdquo; and explore visualizations. Avoid paginated reports to control costs.</p>
+<h2 id="validate-deployment">Validate Deployment</h2>
+<pre tabindex="0"><code># Check outputs
 terraform output
 # In QuickSight
 - Search: &#34;CUDOS Dashboard v5&#34;
@@ -28,25 +110,224 @@ SELECT bill_payer_account_id, line_item_usage_account_id, sum(line_item_unblende
 FROM summary_view
 GROUP BY 1, 2
 LIMIT 10;
-</code></pre><p>fig: CUDOS Dashboard (Executive Summary View)</p><h1 id=services-under-the-hood>Services Under the Hood</h1><p>CUDOS orchestrates several AWS services seamlessly. Here&rsquo;s a walkthrough:</p><h2 id=aws-quicksight>AWS QuickSight</h2><ul><li><p>Dashboards: Access &ldquo;CUDOS Dashboard v5&rdquo; for visuals.</p></li><li><p>Datasets: Sourced from Athena views; scheduled refreshes ensure freshness. Manually refresh if needed.</p></li><li><p>Data Sources: Connected to Athena workgroup &ldquo;CID.&rdquo;</p></li></ul><p>fig: CUDOS Dashboard v5</p><h2 id=aws-athena>AWS Athena</h2><ul><li><p>Workgroup: &ldquo;CID&rdquo; with tables and views (e.g., summary_view). Avoid deleting views.</p></li><li><p>Queries: Run SQL to explore CUR data.</p></li></ul><p>fig: Athena Overview
-fig: Athena Overview</p><h2 id=aws-glue>AWS Glue</h2><ul><li><p>Databases: Contains CUR tables.</p></li><li><p>Crawlers: Scheduled to index S3 data; view IAM roles and run history.</p></li><li><p>Tables: Check schemas for partitioned data.</p></li></ul><p>fig: Glue Overview
-a. Database: In the left panel, click Database. You will see the database name; if you followed the steps, it will be your database. Otherwise, you will see your input. Click it to check for tables.</p><p>fig: Select the Glue Database
+</code></pre><p>fig: CUDOS Dashboard (Executive Summary View)</p>
+<h1 id="services-under-the-hood">Services Under the Hood</h1>
+<p>CUDOS orchestrates several AWS services seamlessly. Here&rsquo;s a walkthrough:</p>
+<h2 id="aws-quicksight">AWS QuickSight</h2>
+<ul>
+<li>
+<p>Dashboards: Access &ldquo;CUDOS Dashboard v5&rdquo; for visuals.</p>
+</li>
+<li>
+<p>Datasets: Sourced from Athena views; scheduled refreshes ensure freshness. Manually refresh if needed.</p>
+</li>
+<li>
+<p>Data Sources: Connected to Athena workgroup &ldquo;CID.&rdquo;</p>
+</li>
+</ul>
+<p>fig: CUDOS Dashboard v5</p>
+<h2 id="aws-athena">AWS Athena</h2>
+<ul>
+<li>
+<p>Workgroup: &ldquo;CID&rdquo; with tables and views (e.g., summary_view). Avoid deleting views.</p>
+</li>
+<li>
+<p>Queries: Run SQL to explore CUR data.</p>
+</li>
+</ul>
+<p>fig: Athena Overview
+fig: Athena Overview</p>
+<h2 id="aws-glue">AWS Glue</h2>
+<ul>
+<li>
+<p>Databases: Contains CUR tables.</p>
+</li>
+<li>
+<p>Crawlers: Scheduled to index S3 data; view IAM roles and run history.</p>
+</li>
+<li>
+<p>Tables: Check schemas for partitioned data.</p>
+</li>
+</ul>
+<p>fig: Glue Overview
+a. Database: In the left panel, click Database. You will see the database name; if you followed the steps, it will be your database. Otherwise, you will see your input. Click it to check for tables.</p>
+<p>fig: Select the Glue Database
 fig: Glue Database Overview
-c. Crawlers: Navigate to left panel and click on Crawlers.</p><p>fig: AWS Glue Crawler
-To view the details of the crawler, click on the crawler.</p><p>fig: Glue Crawler Overview
-Here you can see the IAM roles it is using and other details like crawler run, schedule and many more.</p><h2 id=aws-lambda>AWS Lambda</h2><ul><li>Functions: Handle automation, like dashboard creation via cid-cmd.</li></ul><p>fig: Search Lambda
-a. Function: Navigate to left panel and click on function and you will see the list of the functions.</p><p>fig: Select the function
-For more detailed view click on the function and you will see the details of it.</p><p>fig: Lambda Function Overview</p><h2 id=aws-s3>AWS S3</h2><ul><li>Buckets: Store CUR files (e.g., cid-account-number-local). Directories include manifests, partitions, and status files.</li></ul><p>fig: Search S3 Bucket
-a. Bucket: Navigate to the left panel and click on buckets and search your local</p><p><em>Note: If you followed along you will see your bucket name as cid-account-number-local and aws-athena-query-results-cid-account-id-region</em></p><p>fig: S3 Bucket
-b. bucket directories: Click on object and click the directory to get to the</p><p>fig: S3 Bucket Directories Overview</p><h2 id=aws-cloudformation>AWS CloudFormation</h2><ul><li>Stacks: Manage resources; view events for deployment history. Update via Terraform to avoid conflicts.</li></ul><p>fig: Search Cloudformation
+c. Crawlers: Navigate to left panel and click on Crawlers.</p>
+<p>fig: AWS Glue Crawler
+To view the details of the crawler, click on the crawler.</p>
+<p>fig: Glue Crawler Overview
+Here you can see the IAM roles it is using and other details like crawler run, schedule and many more.</p>
+<h2 id="aws-lambda">AWS Lambda</h2>
+<ul>
+<li>Functions: Handle automation, like dashboard creation via cid-cmd.</li>
+</ul>
+<p>fig: Search Lambda
+a. Function: Navigate to left panel and click on function and you will see the list of the functions.</p>
+<p>fig: Select the function
+For more detailed view click on the function and you will see the details of it.</p>
+<p>fig: Lambda Function Overview</p>
+<h2 id="aws-s3">AWS S3</h2>
+<ul>
+<li>Buckets: Store CUR files (e.g., cid-account-number-local). Directories include manifests, partitions, and status files.</li>
+</ul>
+<p>fig: Search S3 Bucket
+a. Bucket: Navigate to the left panel and click on buckets and search your local</p>
+<p><em>Note: If you followed along you will see your bucket name as cid-account-number-local  and aws-athena-query-results-cid-account-id-region</em></p>
+<p>fig: S3 Bucket
+b. bucket directories: Click on object and click the directory to get to the</p>
+<p>fig: S3 Bucket Directories Overview</p>
+<h2 id="aws-cloudformation">AWS CloudFormation</h2>
+<ul>
+<li>Stacks: Manage resources; view events for deployment history. Update via Terraform to avoid conflicts.</li>
+</ul>
+<p>fig: Search Cloudformation
 fig: CloudFormation Stack Overview
 fig: CloudFormation Stack Overview
-fig: CloudFormation Events</p><h2 id=aws-billing-and-cost-management>AWS Billing and Cost Management</h2><ul><li>Data Exports: Configure CUR reports; view details for delivery settings.</li></ul><p>fig: Go to Billing and Cost Management feature
-a. Data export: In the left panel, click Data Export and select the report. If you deployed via Terraform with default values, the report name remains the same; otherwise, select your custom name.</p><p>fig: CUR Report
-b. Click on the report name to see the details of the report.</p><p>fig: CUR Report Details
-These services integrate to provide end-to-end data flow without manual intervention.</p><h1 id=adding-user-defined-tags>Adding User-Defined Tags</h1><p>Customize CUDOS by incorporating tags for grouping (e.g., by application or business unit) using cost allocation tags or categories.</p><h2 id=prerequisites-1>Prerequisites</h2><ul><li><p>Access to AWS Organizations.</p></li><li><p>Enable tags in Cost Explorer.</p></li><li><p>Activate AWS/user-generated tags.</p></li></ul><p>Changes reflect in CUR after 24 hours.</p><h3 id=step-by-step-guide>Step-by-Step Guide</h3><p><strong>Add Cost Categories</strong></p><p>In Billing and Cost Management:</p><ol><li><p>Navigate to Cost Categories > Create.</p></li><li><p>Define rules (e.g., by account or tag values).</p></li><li><p>Set lookback periods if needed.</p></li><li><p>Review and create.</p></li></ol><p><strong>Modify Queries in Athena</strong></p><ol><li><p>Select AwsDataCatalog and your database.</p></li><li><p>Edit views (e.g., summary_view): Add tag columns (e.g., lineitem_resourcetags_user_silo AS silo).</p></li><li><p>Update GROUP BY clauses.</p></li></ol><pre tabindex=0><code>-- Add new column
+fig: CloudFormation Events</p>
+<h2 id="aws-billing-and-cost-management">AWS Billing and Cost Management</h2>
+<ul>
+<li>Data Exports: Configure CUR reports; view details for delivery settings.</li>
+</ul>
+<p>fig: Go to Billing and Cost Management feature
+a. Data export: In the left panel, click Data Export and select the report. If you deployed via Terraform with default values, the report name remains the same; otherwise, select your custom name.</p>
+<p>fig: CUR Report
+b. Click on the report name to see the details of the report.</p>
+<p>fig: CUR Report Details
+These services integrate to provide end-to-end data flow without manual intervention.</p>
+<h1 id="adding-user-defined-tags">Adding User-Defined Tags</h1>
+<p>Customize CUDOS by incorporating tags for grouping (e.g., by application or business unit) using cost allocation tags or categories.</p>
+<h2 id="prerequisites-1">Prerequisites</h2>
+<ul>
+<li>
+<p>Access to AWS Organizations.</p>
+</li>
+<li>
+<p>Enable tags in Cost Explorer.</p>
+</li>
+<li>
+<p>Activate AWS/user-generated tags.</p>
+</li>
+</ul>
+<p>Changes reflect in CUR after 24 hours.</p>
+<h3 id="step-by-step-guide">Step-by-Step Guide</h3>
+<p><strong>Add Cost Categories</strong></p>
+<p>In Billing and Cost Management:</p>
+<ol>
+<li>
+<p>Navigate to Cost Categories &gt; Create.</p>
+</li>
+<li>
+<p>Define rules (e.g., by account or tag values).</p>
+</li>
+<li>
+<p>Set lookback periods if needed.</p>
+</li>
+<li>
+<p>Review and create.</p>
+</li>
+</ol>
+<p><strong>Modify Queries in Athena</strong></p>
+<ol>
+<li>
+<p>Select AwsDataCatalog and your database.</p>
+</li>
+<li>
+<p>Edit views (e.g., summary_view): Add tag columns (e.g., lineitem_resourcetags_user_silo AS silo).</p>
+</li>
+<li>
+<p>Update GROUP BY clauses.</p>
+</li>
+</ol>
+<pre tabindex="0"><code>-- Add new column
 line_item_resource_tags_user_team AS team,
 -- Update GROUP BY
 GROUP BY 1,2,3,..., team
-</code></pre><ol start=4><li>Run and verify.</li></ol><p>Repeat for hourly_view and resource_view.</p><p><strong>Modify Datasets in QuickSight</strong></p><ol><li><p>Edit dataset (e.g., summary_view).</p></li><li><p>Confirm new fields.</p></li><li><p>Save & Publish; monitor refresh.</p></li></ol><p><strong>Modify QuickSight Analysis</strong></p><ol><li><p>Save dashboard as analysis.</p></li><li><p>Add fields to visuals (drag to Group By).</p></li><li><p>Create parameters and controls for filtering.</p></li><li><p>Add filters linking to parameters.</p></li><li><p>Publish updates.</p></li></ol><p>This enables tag-based filtering, enhancing chargeback and optimization.</p><h1 id=exploring-the-cudos-dashboard>Exploring the CUDOS Dashboard</h1><p>Once deployed, dive into CUDOS Dashboard v5 in QuickSight. Organized into interactive sheets, it provides granular, recommendation-driven analysis of CUR data. Use global filters (top-right) for time ranges, accounts, regions, or tags. Here&rsquo;s a hands-on tour of key sheets and features:</p><ul><li>Start with Executive Billing Summary to instantly view your total AWS spend, top services, and budget versus actual in one clear dashboard. Click any number to drill down into accounts or regions.</li></ul><p>fig: Billing Summary</p><ul><li>Go to compute to filter by instance type, compare CPU idle against cost, and access one-click rightsizing or Spot/Graviton recommendations.</li></ul><p>fig: Compute Summary</p><ul><li>Move to storage to identify old backups or unused EBS volumes and apply lifecycle policies to save immediately.</li></ul><p>fig: Storage Summary</p><ul><li>Cost Monitoring on the based of regions</li></ul><p>fig: Cost by Regions</p><ul><li>Monitoring based on the account</li></ul><p>fig: Cost occurred by account</p><ul><li>Cost according to resource tags</li></ul><p>fig: Select TAGsplorer
-fig: Primary Tags</p><h1 id=best-practices-and-troubleshooting>Best Practices and Troubleshooting</h1><ul><li><p>Tagging: Consistently tag resources for accurate breakdowns.</p></li><li><p>Monitoring: Schedule reviews; integrate with SSO for security.</p></li><li><p>Upgrades: Keep to v5+ for features like DynamoDB simulations.</p></li><li><p>Common Issues: If tags don&rsquo;t appear, verify Athena views and QuickSight refreshes. CUR delays are normal.</p></li></ul><p>Organizations using CUDOS often achieve 15-25% cost savings through insights.</p><h1 id=conclusion>Conclusion</h1><p>Implementing CUDOS provides a robust tool for AWS cost management. From deployment with Terraform to custom tagging, this guide covers the essentials to start. Beyond visibility, CUDOS converts raw CUR data into actionable intelligence, offering ML-powered savings recommendations, resource-level insights, and accurate forecasting.</p></div><div class=back><a href=/blogs/>← Back to blogs</a></div></article></div></body></html>
+</code></pre><ol start="4">
+<li>Run and verify.</li>
+</ol>
+<p>Repeat for hourly_view and resource_view.</p>
+<p><strong>Modify Datasets in QuickSight</strong></p>
+<ol>
+<li>
+<p>Edit dataset (e.g., summary_view).</p>
+</li>
+<li>
+<p>Confirm new fields.</p>
+</li>
+<li>
+<p>Save &amp; Publish; monitor refresh.</p>
+</li>
+</ol>
+<p><strong>Modify QuickSight Analysis</strong></p>
+<ol>
+<li>
+<p>Save dashboard as analysis.</p>
+</li>
+<li>
+<p>Add fields to visuals (drag to Group By).</p>
+</li>
+<li>
+<p>Create parameters and controls for filtering.</p>
+</li>
+<li>
+<p>Add filters linking to parameters.</p>
+</li>
+<li>
+<p>Publish updates.</p>
+</li>
+</ol>
+<p>This enables tag-based filtering, enhancing chargeback and optimization.</p>
+<h1 id="exploring-the-cudos-dashboard">Exploring the CUDOS Dashboard</h1>
+<p>Once deployed, dive into CUDOS Dashboard v5 in QuickSight. Organized into interactive sheets, it provides granular, recommendation-driven analysis of CUR data. Use global filters (top-right) for time ranges, accounts, regions, or tags. Here&rsquo;s a hands-on tour of key sheets and features:</p>
+<ul>
+<li>Start with Executive Billing Summary to instantly view your total AWS spend, top services, and budget versus actual in one clear dashboard. Click any number to drill down into accounts or regions.</li>
+</ul>
+<p>fig: Billing Summary</p>
+<ul>
+<li>Go to compute to filter by instance type, compare CPU idle against cost, and access one-click rightsizing or Spot/Graviton recommendations.</li>
+</ul>
+<p>fig: Compute Summary</p>
+<ul>
+<li>Move to storage to identify old backups or unused EBS volumes and apply lifecycle policies to save immediately.</li>
+</ul>
+<p>fig: Storage Summary</p>
+<ul>
+<li>Cost Monitoring on the based of regions</li>
+</ul>
+<p>fig: Cost by Regions</p>
+<ul>
+<li>Monitoring based on the account</li>
+</ul>
+<p>fig: Cost occurred by account</p>
+<ul>
+<li>Cost according to resource tags</li>
+</ul>
+<p>fig: Select TAGsplorer
+fig: Primary Tags</p>
+<h1 id="best-practices-and-troubleshooting">Best Practices and Troubleshooting</h1>
+<ul>
+<li>
+<p>Tagging: Consistently tag resources for accurate breakdowns.</p>
+</li>
+<li>
+<p>Monitoring: Schedule reviews; integrate with SSO for security.</p>
+</li>
+<li>
+<p>Upgrades: Keep to v5+ for features like DynamoDB simulations.</p>
+</li>
+<li>
+<p>Common Issues: If tags don&rsquo;t appear, verify Athena views and QuickSight refreshes. CUR delays are normal.</p>
+</li>
+</ul>
+<p>Organizations using CUDOS often achieve 15-25% cost savings through insights.</p>
+<h1 id="conclusion">Conclusion</h1>
+<p>Implementing CUDOS provides a robust tool for AWS cost management. From deployment with Terraform to custom tagging, this guide covers the essentials to start. Beyond visibility, CUDOS converts raw CUR data into actionable intelligence, offering ML-powered savings recommendations, resource-level insights, and accurate forecasting.</p>
+
+      </div>
+
+      <div class="back"><a href="/blogs/">← Back to blogs</a></div>
+    </article>
+  </div>
+</body>
+</html>
