@@ -1,49 +1,126 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Blogs - Prashansa Joshi</title>
-  <style>
-    /* copy of your home styles, keep synchronized if you update home */
-    body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; margin: 0; background: #0b0f17; color: #e8eef5; }
-    .wrap { max-width: 1300px; margin: 80px auto; padding: 0 60px; display: flex; flex-direction: column; }
-    header { text-align: right; margin-bottom: 40px; }
-    header a { color:#58a6ff; text-decoration:none; margin-left:18px; font-size:1rem; }
-    header a:hover { text-decoration:underline; }
+{{ define "main" }}
+<style>
+  body {
+    background-color: #0d1117;
+  }
 
-    .page-title { font-size:3rem; color:#fff; margin: 10px 0 24px 0; }
-    .list { margin-top: 16px; }
-    .post { background: rgba(255,255,255,0.02); padding:18px; border-radius:12px; margin-bottom:18px; box-shadow: 0 8px 30px rgba(0,0,0,0.6); }
-    .post h2 { margin:0 0 8px 0; font-size:1.5rem; }
-    .post a { color:#58a6ff; text-decoration:none; }
-    .post .meta { color:#9fb7d6; margin-bottom:8px; font-size:0.95rem; }
-    .post p { color:#b0b8c2; margin:0; line-height:1.6; }
-    @media (max-width:768px) { .wrap { padding: 0 24px } }
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <header>
-      <a href="/">Home</a>
-      <a href="/blogs/">Blogs</a>
-    </header>
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 36px;
+    margin-top: 40px;
 
-    <main>
-      <h1 class="page-title">Blogs</h1>
+    /* add left margin */
+    margin-left: 80px;
+    margin-right: 40px;
+  }
 
-      <div class="list">
-        {{ $pages := where .Pages "Type" "blogs" }}
-        {{ range $pages.ByDate.Reverse }}
-          <article class="post">
-            <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-            <div class="meta">{{ .Date.Format "Jan 2, 2006" }}</div>
-            <p>{{ if .Params.summary }}{{ .Params.summary }}{{ else }}{{ .Summary }}{{ end }}</p>
-            <div style="margin-top:10px;"><a href="{{ .RelPermalink }}" style="color:#58a6ff;">Read</a></div>
-          </article>
-        {{ end }}
-      </div>
-    </main>
+  .blog-card {
+    background-color: #11141b;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.5);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    /* bigger card */
+    min-height: 420px;
+  }
+
+  .blog-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 22px rgba(0,0,0,0.6);
+  }
+
+  .blog-thumb {
+    width: 100%;
+    height: 150px;      /* smaller thumbnail */
+    object-fit: cover;  /* keeps crop clean */
+    border-bottom: 1px solid #0f1218; /* optional clean divider */
+  }
+
+  .blog-details {
+    padding: 22px;
+  }
+
+  .blog-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #58a6ff;
+    text-decoration: none;
+  }
+
+  .blog-date {
+    color: #9fb7d6;
+    font-size: 15px;
+    margin-top: 8px;
+  }
+
+  .blog-summary {
+    color: #b0b8c2;
+    margin-top: 14px;
+    font-size: 16px;
+    line-height: 1.4;
+  }
+
+  .blog-read {
+    display: inline-block;
+    margin-top: 14px;
+    color: #58a6ff;
+    text-decoration: none;
+    font-size: 16px;
+  }
+</style>
+
+<h1 style="color:white;">Blogs</h1>
+
+<div class="blog-grid">
+
+{{ range .Pages }}
+
+  {{/* ensure . is the page for clarity */}}
+  {{ $page := . }}
+
+  {{/* default fallback (site static) */}}
+  {{ $thumb := "/images/default-card.png" }}
+
+  {{/* 1) prefer front-matter thumbnail */}}
+  {{ with $page.Params.thumbnail }}
+    {{ $thumbParam := . }}
+    {{ with $page.Resources.GetMatch $thumbParam }}
+      {{ $thumb = .RelPermalink }}
+    {{ else }}
+      {{/* if not a page resource use the param string directly */}}
+      {{ $thumb = $thumbParam }}
+    {{ end }}
+  {{ else }}
+    {{/* 2) prefer feature* resource in the bundle */}}
+    {{ $featured := $page.Resources.Match "feature*" }}
+    {{ if gt (len $featured) 0 }}
+      {{ $thumb = (index $featured 0).RelPermalink }}
+    {{ else }}
+      {{/* 3) then first image resource in bundle */}}
+      {{ $imgs := $page.Resources.ByType "image" }}
+      {{ if gt (len $imgs) 0 }}
+        {{ $thumb = (index $imgs 0).RelPermalink }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+
+  <div class="blog-card">
+    <a href="{{ .RelPermalink }}">
+      <img class="blog-thumb" src="{{ $thumb }}" alt="blog thumbnail">
+    </a>
+
+    <div class="blog-details">
+      <a class="blog-title" href="{{ .RelPermalink }}">{{ .Title }}</a>
+      <div class="blog-date">{{ .Date.Format "Jan 2, 2006" }}</div>
+      <p class="blog-summary">{{ .Summary }}</p>
+      <a class="blog-read" href="{{ .RelPermalink }}">Read</a>
+    </div>
   </div>
-</body>
-</html>
+
+{{ end }}
+
+</div>
+
+{{ end }}

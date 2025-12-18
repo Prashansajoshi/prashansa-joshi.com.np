@@ -30,3 +30,41 @@ a:hover {
 .home, .archive, .index {
   padding-top: 1rem;
 }
+
+/* add to assets/css/extended/10-custom.css or static/css/custom.css */
+.post-toc details {
+  background: rgba(255,255,255,0.02);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 18px 0;
+  color: #cfe6ff;
+}
+
+.post-toc summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #58a6ff;
+  outline: none;
+}
+
+.post-toc .toc-body {
+  margin-top: 8px;
+}
+
+.post-toc .toc-body ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.post-toc .toc-body li {
+  margin: 6px 0;
+}
+
+.post-toc .toc-body a {
+  color: #bcd7ff;
+  text-decoration: none;
+}
+
+.post-toc .toc-body a:hover {
+  text-decoration: underline;
+}

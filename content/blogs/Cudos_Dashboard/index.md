@@ -1,8 +1,9 @@
 ---
-title: "My First Blog"
+title: "CUDOS Dashboard"
 date: 2025-11-09T10:00:00+05:45
 draft: false
 tags: ["DevOps", "AWS"]
+thumbnail: "images/thumbnail.png"   
 summary: "CUDOS Dashboard (Implementation and walkthrough)"
 ---
 
@@ -35,9 +36,10 @@ No costs beyond standard AWS usage apply. QuickSight's SPICE engine efficiently 
 
 * Athena runs predefined queries to generate views.
 
-* QuickSight datasets pull from these views for dashboard rendering.
+* QuickSight datasets pull from these views for dashboard
 
-![alt text](image.png)
+![CUDOS Architecture](images/1.png)
+
 fig: Architecture of the CUDOS dashboard implementation
 For multi-account scenarios, replicate CUR data from the Payer Account to the Data Collection Account using S3 replication rules.
 
@@ -95,6 +97,7 @@ FROM summary_view
 GROUP BY 1, 2
 LIMIT 10;
 ```
+![CUDOS Dashboard](images/2.png)
 
 fig: CUDOS Dashboard (Executive Summary View)
 
@@ -109,6 +112,9 @@ CUDOS orchestrates several AWS services seamlessly. Here's a walkthrough:
 
 * Data Sources: Connected to Athena workgroup "CID."
 
+
+![CUDOS Dashboard](images/3.png)
+
 fig: CUDOS Dashboard v5
 
 ## AWS Athena
@@ -117,8 +123,12 @@ fig: CUDOS Dashboard v5
 
 * Queries: Run SQL to explore CUR data.
 
+![AWS Athena](images/4.png)
+
 fig: Athena Overview
-fig: Athena Overview
+
+![AWS Athena](images/5.png)
+
 
 ## AWS Glue
 
@@ -128,17 +138,32 @@ fig: Athena Overview
 
 * Tables: Check schemas for partitioned data.
 
-fig: Glue Overview
+![AWS Glue](images/6.png)
+
+![AWS Glue](images/7.png)
+
 a. Database: In the left panel, click Database. You will see the database name; if you followed the steps, it will be your database. Otherwise, you will see your input. Click it to check for tables.
 
+![AWS Glue](images/8.png)
+
 fig: Select the Glue Database
+
+![AWS Glue](images/9.png)
+
 fig: Glue Database Overview
+
 c. Crawlers: Navigate to left panel and click on Crawlers.
 
+![AWS Glue](images/10.png)
+
 fig: AWS Glue Crawler
+
 To view the details of the crawler, click on the crawler.
 
+![AWS Glue](images/11.png)
+
 fig: Glue Crawler Overview
+
 Here you can see the IAM roles it is using and other details like crawler run, schedule and many more.
 
 ## AWS Lambda
@@ -147,40 +172,75 @@ Here you can see the IAM roles it is using and other details like crawler run, s
 fig: Search Lambda
 a. Function: Navigate to left panel and click on function and you will see the list of the functions.
 
+![AWS Lambda](images/12.png)
+
 fig: Select the function
+
  For more detailed view click on the function and you will see the details of it.
+
+![AWS Lambda](images/13.png)
 
 fig: Lambda Function Overview
 
 ## AWS S3
 * Buckets: Store CUR files (e.g., cid-account-number-local). Directories include manifests, partitions, and status files.
 
+![AWS S3](images/14.png)
+
 fig: Search S3 Bucket
+
 a. Bucket: Navigate to the left panel and click on buckets and search your local
 
 _Note: If you followed along you will see your bucket name as cid-account-number-local  and aws-athena-query-results-cid-account-id-region_
 
+![AWS S3](images/15.png)
+
 fig: S3 Bucket
+
 b. bucket directories: Click on object and click the directory to get to the
+
+![AWS S3](images/16.png)
 
 fig: S3 Bucket Directories Overview
 
 ## AWS CloudFormation
 * Stacks: Manage resources; view events for deployment history. Update via Terraform to avoid conflicts.
 
+![AWS CloudFormation](images/17.png)
+
 fig: Search Cloudformation
+
+![AWS CloudFormation](images/18.png)
+
 fig: CloudFormation Stack Overview
+
+![AWS CloudFormation](images/18.png)
+
 fig: CloudFormation Stack Overview
+
+![AWS CloudFormation](images/19.png)
+
 fig: CloudFormation Events
+
+![AWS CloudFormation](images/20.png)
+
 
 ## AWS Billing and Cost Management
 * Data Exports: Configure CUR reports; view details for delivery settings.
 
+![AWS Billing](images/21.png)
+
 fig: Go to Billing and Cost Management feature
+
 a. Data export: In the left panel, click Data Export and select the report. If you deployed via Terraform with default values, the report name remains the same; otherwise, select your custom name.
 
+![AWS Billing](images/22.png)
+
 fig: CUR Report
+
 b. Click on the report name to see the details of the report.
+
+![AWS Billing](images/23.png)
 
 fig: CUR Report Details
 These services integrate to provide end-to-end data flow without manual intervention.
@@ -254,35 +314,45 @@ Once deployed, dive into CUDOS Dashboard v5 in QuickSight. Organized into intera
 
 * Start with Executive Billing Summary to instantly view your total AWS spend, top services, and budget versus actual in one clear dashboard. Click any number to drill down into accounts or regions.
 
+![CUDOS Dashboard](images/24.png)
+
 fig: Billing Summary
 
 * Go to compute to filter by instance type, compare CPU idle against cost, and access one-click rightsizing or Spot/Graviton recommendations.
 
+![CUDOS Dashboard](images/25.png)
 
 fig: Compute Summary
 
 * Move to storage to identify old backups or unused EBS volumes and apply lifecycle policies to save immediately.
 
+![CUDOS Dashboard](images/26.png)
 
 fig: Storage Summary
  
 
 * Cost Monitoring on the based of regions
 
+![CUDOS Dashboard](images/27.png)
 
 fig: Cost by Regions
  
 
 * Monitoring based on the account
 
+![CUDOS Dashboard](images/28.png)
 
 fig: Cost occurred by account
  
 
 * Cost according to resource tags
 
+![CUDOS Dashboard](images/29.png)
 
 fig: Select TAGsplorer
+
+![CUDOS Dashboard](images/30.png)
+
 fig: Primary Tags
 
 # Best Practices and Troubleshooting

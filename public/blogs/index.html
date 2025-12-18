@@ -4,46 +4,157 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Blogs - Prashansa Joshi</title>
-  <style>
-     
-    body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; margin: 0; background: #0b0f17; color: #e8eef5; }
-    .wrap { max-width: 1300px; margin: 80px auto; padding: 0 60px; display: flex; flex-direction: column; }
-    header { text-align: right; margin-bottom: 40px; }
-    header a { color:#58a6ff; text-decoration:none; margin-left:18px; font-size:1rem; }
-    header a:hover { text-decoration:underline; }
-
-    .page-title { font-size:3rem; color:#fff; margin: 10px 0 24px 0; }
-    .list { margin-top: 16px; }
-    .post { background: rgba(255,255,255,0.02); padding:18px; border-radius:12px; margin-bottom:18px; box-shadow: 0 8px 30px rgba(0,0,0,0.6); }
-    .post h2 { margin:0 0 8px 0; font-size:1.5rem; }
-    .post a { color:#58a6ff; text-decoration:none; }
-    .post .meta { color:#9fb7d6; margin-bottom:8px; font-size:0.95rem; }
-    .post p { color:#b0b8c2; margin:0; line-height:1.6; }
-    @media (max-width:768px) { .wrap { padding: 0 24px } }
-  </style>
+  <link rel="stylesheet" href="/css/custom.css">
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <a href="/">Home</a>
-      <a href="/blogs/">Blogs</a>
-    </header>
+  <header style="padding:20px 60px; text-align:right;">
+    <a href="/" style="color:#58a6ff; text-decoration:none; margin-right:20px;">Home</a>
+    <a href="/blogs/" style="color:#58a6ff; text-decoration:none;">Blogs</a>
+  </header>
 
-    <main>
-      <h1 class="page-title">Blogs</h1>
+  <main>
+    
+<style>
+  body {
+    background-color: #0d1117;
+  }
 
-      <div class="list">
-        
-        
-          <article class="post">
-            <h2><a href="/blogs/2025-11-09-welcome/">My First Blog</a></h2>
-            <div class="meta">Nov 9, 2025</div>
-            <p>CUDOS Dashboard (Implementation and walkthrough)</p>
-            <div style="margin-top:10px;"><a href="/blogs/2025-11-09-welcome/" style="color:#58a6ff;">Read</a></div>
-          </article>
-        
-      </div>
-    </main>
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 36px;
+    margin-top: 40px;
+
+     
+    margin-left: 80px;
+    margin-right: 40px;
+  }
+
+  .blog-card {
+    background-color: #11141b;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.5);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+     
+    min-height: 420px;
+  }
+
+  .blog-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 22px rgba(0,0,0,0.6);
+  }
+
+  .blog-thumb {
+    width: 100%;
+    height: 150px;       
+    object-fit: cover;   
+    border-bottom: 1px solid #0f1218;  
+  }
+
+  .blog-details {
+    padding: 22px;
+  }
+
+  .blog-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #58a6ff;
+    text-decoration: none;
+  }
+
+  .blog-date {
+    color: #9fb7d6;
+    font-size: 15px;
+    margin-top: 8px;
+  }
+
+  .blog-summary {
+    color: #b0b8c2;
+    margin-top: 14px;
+    font-size: 16px;
+    line-height: 1.4;
+  }
+
+  .blog-read {
+    display: inline-block;
+    margin-top: 14px;
+    color: #58a6ff;
+    text-decoration: none;
+    font-size: 16px;
+  }
+</style>
+
+<h1 style="color:white;">Blogs</h1>
+
+<div class="blog-grid">
+
+
+
+  
+  
+
+  
+  
+
+  
+  
+    
+    
+      
+    
+  
+
+  <div class="blog-card">
+    <a href="/blogs/velero_backup/">
+      <img class="blog-thumb" src="/blogs/velero_backup/thumbnail.png" alt="blog thumbnail">
+    </a>
+
+    <div class="blog-details">
+      <a class="blog-title" href="/blogs/velero_backup/">Velero Backup</a>
+      <div class="blog-date">Nov 19, 2025</div>
+      <p class="blog-summary">Velero Backup on Amazon EKS with Pod Identity</p>
+      <a class="blog-read" href="/blogs/velero_backup/">Read</a>
+    </div>
   </div>
+
+
+
+  
+  
+
+  
+  
+
+  
+  
+    
+    
+      
+    
+  
+
+  <div class="blog-card">
+    <a href="/blogs/cudos_dashboard/">
+      <img class="blog-thumb" src="/blogs/cudos_dashboard/images/thumbnail.png" alt="blog thumbnail">
+    </a>
+
+    <div class="blog-details">
+      <a class="blog-title" href="/blogs/cudos_dashboard/">CUDOS Dashboard</a>
+      <div class="blog-date">Nov 9, 2025</div>
+      <p class="blog-summary">CUDOS Dashboard (Implementation and walkthrough)</p>
+      <a class="blog-read" href="/blogs/cudos_dashboard/">Read</a>
+    </div>
+  </div>
+
+
+
+</div>
+
+
+  </main>
+
+  <script src="/js/theme-toggle.js"></script>
 </body>
 </html>

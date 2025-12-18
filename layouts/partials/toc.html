@@ -1,0 +1,12 @@
+{{/* layouts/partials/toc.html */}}
+{{ $toc := .TableOfContents }}
+{{ if gt (len (delimit (slice $toc) "")) 0 }}
+  <nav class="post-toc" aria-label="Table of contents">
+    <details open>
+      <summary>Contents</summary>
+      <div class="toc-body">
+        {{ $toc | safeHTML }}
+      </div>
+    </details>
+  </nav>
+{{ end }}
