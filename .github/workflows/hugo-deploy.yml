@@ -28,6 +28,9 @@ jobs:
       - name: Build site
         run: hugo --minify
 
+      - name: Create .nojekyll
+        run: touch public/.nojekyll
+
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:
