@@ -22,7 +22,7 @@ jobs:
           extended: true
 
       - name: Build site
-        run: hugo --minify --destination=public
+        run: hugo --minify --destination=.
 
       - name: Create .nojekyll
         run: touch public/.nojekyll
