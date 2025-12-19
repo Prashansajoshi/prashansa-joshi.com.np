@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     outputs:
-      artifact-path: ${{ steps.upload-artifact.outputs.artifact-path }}
+      artifact-path: ${{ steps.upload-artifact.outputs.artifact-path }} 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
