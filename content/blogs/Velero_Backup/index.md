@@ -15,12 +15,11 @@ Data protection is a critical part of Kubernetes operations. In Amazon EKS, Vele
 
 Velero provides:
 
+- Backup and restore of Kubernetes objects and persistent volumes.
 
-* Backup and restore of Kubernetes objects and persistent volumes.
+- Disaster recovery for your workloads.
 
-* Disaster recovery for your workloads.
-
-* Migration between clusters and even across cloud providers.
+- Migration between clusters and even across cloud providers.
 
 In AWS, Velero integrates seamlessly with Amazon S3 for backup storage and IAM roles for secure access.
 
