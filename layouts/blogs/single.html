@@ -45,6 +45,31 @@
     a {
       color: #58a6ff;
     }
+
+    /* --------- Fix list indentation --------- */
+    .wrap ul,
+    .wrap ol {
+      list-style-position: inside;   /* bullets inside */
+      padding-left: 1.2em;          /* space from bullet to text */
+      margin-left: 0;               /* remove extra left margin */
+    }
+
+    .wrap li {
+      display: list-item;
+      text-indent: 0;
+    }
+
+    /* Nested lists */
+    .wrap ul ul,
+    .wrap ol ol {
+      padding-left: 1.5em;
+    }
+
+    /* TOC lists */
+    .wrap .table-of-contents ul {
+      list-style-position: inside;
+      padding-left: 1em;
+}
   </style>
 </head>
 
