@@ -1,23 +1,19 @@
-name: Deploy Hugo site to GitHub Pages
+name: Build Hugo site
 
 on:
   push:
     branches:
       - main
 
-permissions:
-  contents: write   # allow the GITHUB_TOKEN to push built site
-
 jobs:
-  build-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          submodules: recursive  # ensures PaperMod theme is fetched
-          fetch-depth: 0         # needed for submodules
+          submodules: recursive
+          fetch-depth: 0
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
@@ -26,13 +22,7 @@ jobs:
           extended: true
 
       - name: Build site
-        run: hugo --minify
+        run: hugo --minify --destination=public
 
       - name: Create .nojekyll
         run: touch public/.nojekyll
-
-      - name: Build Hugo site
-        run: hugo --minify --destination=public
-
-      - name: Verify output
-        run: ls -l public
