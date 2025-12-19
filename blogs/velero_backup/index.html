@@ -1,0 +1,145 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Velero Backup</title><style>body{background:#0b0f17;font-family:Inter,system-ui,-apple-system,segoe ui,Roboto,Arial;color:#e8eef5;margin:0;padding:0}.wrap{max-width:1e3px;margin:80px auto;padding:0 60px}nav{text-align:right;margin-bottom:40px}nav a{color:#58a6ff;text-decoration:none;margin-left:18px}nav a:hover{text-decoration:underline}img{max-width:100%;border-radius:6px;margin:20px 0}a{color:#58a6ff}</style></head><body><div class=wrap><nav><a href=/>Home</a>
+<a href=/blogs/>Blogs</a></nav><h1>Velero Backup</h1><p style=color:#9fb7d6>Nov 19, 2025</p><nav class=post-toc aria-label="Table of contents"><details open><summary>Contents</summary><div class=toc-body><nav id=TableOfContents><ul><li><a href=#step-1-create-an-s3-backup-bucket>Step 1: Create an S3 Backup Bucket</a></li><li><a href=#step-2-create-iam-role-and-policy-for-velero>Step 2: Create IAM Role and Policy for Velero</a></li><li><a href=#step-3-deploy-velero-via-helm>Step 3: Deploy Velero via Helm</a></li><li><a href=#step-4-velero-helm-values-valuesyaml>Step 4: Velero Helm Values (values.yaml)</a></li><li><a href=#key-highlights-step-4>Key Highlights (Step 4)</a></li><li><a href=#step-5-verify-backup>Step 5: Verify Backup</a></li><li><a href=#step-6-restore-from-backup>Step 6: Restore from Backup</a></li><li><a href=#best-practices>Best Practices</a></li><li><a href=#troubleshooting>Troubleshooting</a></li></ul></nav></div></details></nav><h1 id=introduction>Introduction</h1><p>Data protection is a critical part of Kubernetes operations. In Amazon EKS, Velero is a popular open-source tool that provides backup and restore, disaster recovery, and migration capabilities for Kubernetes clusters. This blog will walk through how to set up Velero backups on Amazon EKS using Pod Identity, eliminating the need for long-lived credentials.</p><h1 id=why-velero>Why Velero?</h1><p>Velero provides:</p><ul><li><p>Backup and restore of Kubernetes objects and persistent volumes.</p></li><li><p>Disaster recovery for your workloads.</p></li><li><p>Migration between clusters and even across cloud providers.</p></li></ul><p>In AWS, Velero integrates seamlessly with Amazon S3 for backup storage and IAM roles for secure access.</p><h1 id=architecture-overview>Architecture Overview</h1><ol><li><p><strong>Velero Server</strong> Pod runs in the velero namespace.</p></li><li><p><strong>Amazon S3 bucket</strong> stores the backup data.</p></li><li><p><strong>EKS Pod Identity</strong> assigns an IAM role to Velero’s ServiceAccount.</p></li><li><p><strong>IAM Policy</strong> grants Velero permissions to read and write to the S3 bucket.</p></li></ol><h1 id=prerequisites>Prerequisites</h1><ul><li><p>An EKS cluster (1.24+ recommended).</p></li><li><p>AWS CLI configured.</p></li><li><p>kubectl installed and pointing to your EKS cluster.</p></li><li><p>Helm installed.</p></li><li><p>Terraform installed (for infrastructure setup).</p></li></ul><h2 id=step-1-create-an-s3-backup-bucket>Step 1: Create an S3 Backup Bucket</h2><p>We’ll use Terraform to create the bucket and configure versioning:</p><pre tabindex=0><code>module &#34;backup_eks&#34; {
+  source = &#34;../modules/terraform-aws-s3-module&#34;
+  bucket        = &#34;test-ue1-agf-d-s3-backup-bucket&#34;
+  force_destroy = true
+  versioning = {
+    enabled = true
+  }
+  server_side_encryption_configuration = {
+    rule = {
+      apply_server_side_encryption_by_default = {
+        sse_algorithm = &#34;AES256&#34;
+      }
+    }
+  }
+  tags = {
+    Environment = &#34;prod&#34;
+    Project     = &#34;test&#34;
+  }
+}
+</code></pre><p>This bucket will store all Velero backups.</p><h2 id=step-2-create-iam-role-and-policy-for-velero>Step 2: Create IAM Role and Policy for Velero</h2><p>Velero needs S3 access. With Pod Identity, we bind a Kubernetes ServiceAccount to an IAM role.</p><pre tabindex=0><code>resource &#34;aws_iam_policy&#34; &#34;velero_identity_policy&#34; {
+  name        = &#34;test-ue1-agf-d-policy-velero&#34;
+  description = &#34;IAM policy for Velero Pod to access S3&#34;
+  policy = jsonencode({
+    Version = &#34;2012-10-17&#34;
+    Statement = [
+      {
+        Effect = &#34;Allow&#34;
+        Action = [
+          &#34;s3:GetObject&#34;,
+          &#34;s3:ListBucket&#34;,
+          &#34;s3:PutObject&#34;,
+          &#34;s3:DeleteObject&#34;,
+        ]
+        Resource = [
+          &#34;arn:aws:s3:::${module.backup_eks.s3_bucket_id}&#34;,
+          &#34;arn:aws:s3:::${module.backup_eks.s3_bucket_id}/*&#34;
+        ]
+      }
+    ]
+  })
+}
+resource &#34;aws_iam_role&#34; &#34;velero_identity_role&#34; {
+  name               = &#34;test-ue1-agf-d-role-velero&#34;
+  assume_role_policy = data.aws_iam_policy_document.this.json
+}
+resource &#34;aws_iam_role_policy_attachment&#34; &#34;attach_velero_policy&#34; {
+  policy_arn = aws_iam_policy.velero_identity_policy.arn
+  role       = aws_iam_role.velero_identity_role.name
+}
+</code></pre><p>The assume role policy should allow Pod Identity service to assume the role:</p><pre tabindex=0><code>{
+  &#34;Version&#34;: &#34;2012-10-17&#34;,
+  &#34;Statement&#34;: [
+    {
+      &#34;Effect&#34;: &#34;Allow&#34;,
+      &#34;Principal&#34;: {
+        &#34;Service&#34;: &#34;pods.eks.amazonaws.com&#34;
+      },
+      &#34;Action&#34;: [&#34;sts:TagSession&#34;, &#34;sts:AssumeRole&#34;]
+    }
+  ]
+}
+</code></pre><h2 id=step-3-deploy-velero-via-helm>Step 3: Deploy Velero via Helm</h2><p>We’ll use the official Helm chart:</p><pre tabindex=0><code>helm repo add vmware-tanzu https://vmware-tanzu.github.io/helm-charts
+helm repo update
+</code></pre><p>Then deploy with:</p><pre tabindex=0><code>helm upgrade --install test-velero vmware-tanzu/velero \
+  --version 10.1.2 \
+  -f values.yaml \
+  --namespace velero --create-namespace
+</code></pre><h2 id=step-4-velero-helm-values-valuesyaml>Step 4: Velero Helm Values (values.yaml)</h2><p>Here’s our production-ready configuration:</p><pre tabindex=0><code>fullnameOverride: test-prod-velero
+image:
+  repository: velero/velero
+  tag: v1.15.2
+  pullPolicy: IfNotPresent
+
+# Health checks
+livenessProbe:
+  httpGet:
+    path: /metrics
+    port: http-monitoring
+    scheme: HTTP
+  initialDelaySeconds: 10
+  periodSeconds: 30
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 5
+readinessProbe:
+  httpGet:
+    path: /metrics
+    port: http-monitoring
+    scheme: HTTP
+  initialDelaySeconds: 10
+  periodSeconds: 30
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 5
+
+# AWS plugin
+initContainers:
+  - name: velero-plugin-for-aws
+    image: velero/velero-plugin-for-aws:v1.10.0
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+      - mountPath: /target
+        name: plugins
+
+# Backup storage location
+configuration:
+  backupStorageLocation:
+  - name: test-prod-velero-backup-storage
+    provider: aws
+    bucket: test-ue1-agf-d-s3-backup-bucket
+    accessMode: ReadWrite
+    config:
+     region: us-east-1
+  volumeSnapshotLocation: []
+
+# Service account (bound via Pod Identity)
+serviceAccount:
+  server:
+    create: true
+    name: test-prod-velero-serviceaccount
+
+# No static creds
+credentials:
+  useSecret: false
+
+# Scheduled backups
+schedules:
+  mybackup:
+    disabled: false
+    labels:
+      owner: prashansa.joshi
+      application: velero
+      environment: prod
+      project: test
+    schedule: &#34;0 0 * * *&#34;   # Daily at midnight
+    useOwnerReferencesInBackup: false
+    paused: false
+    skipImmediately: false
+    template:
+      ttl: &#34;168h&#34;            # Keep backups for 7 days
+      storageLocation: test-prod-velero-backup-storage
+      includedNamespaces:
+      - prod
+</code></pre><ul><li><p>BackupStorageLocation → Defines where backups are stored (AWS S3 in our case).</p></li><li><p>VolumeSnapshotLocation → Defines where persistent volume snapshots are stored.</p></li><li><p>ServiceAccount → Provides Velero the right permissions via Pod Identity.</p></li><li><p>Schedules → Automates recurring backups with retention policies.</p></li></ul><h2 id=key-highlights-step-4>Key Highlights (Step 4)</h2><ul><li><p>Pod Identity is used (credentials.useSecret=false + ServiceAccount binding).</p></li><li><p>S3 bucket stores all backups.</p></li><li><p>Daily backup schedule (0 0 * * *).</p></li><li><p>Retention policy (ttl: 168h = 7 days).</p></li><li><p>Namespace filtering (only prod namespace).</p></li></ul><h2 id=step-5-verify-backup>Step 5: Verify Backup</h2><ul><li>Check that Velero is running:</li></ul><p><code>kubectl get pods -n velero</code></p><ul><li>Trigger a manual backup:</li></ul><p><code>velero backup create test-manual-backup --include-namespaces test</code></p><ul><li>Check backup status:</li></ul><p><code>velero backup get</code></p><ul><li>Verify in S3:</li></ul><p><code>aws s3 ls s3://test-ue1-agf-d-s3-backup-bucket/backups/</code></p><h2 id=step-6-restore-from-backup>Step 6: Restore from Backup</h2><ul><li>To restore from a backup:</li></ul><p><code>velero restore create --from-backup test-manual-backup</code></p><ul><li>Monitor restore status:</li></ul><p><code>velero restore get</code></p><h2 id=best-practices>Best Practices</h2><ul><li><p>Secure the S3 Bucket: Enable bucket encryption and restrict public access.</p></li><li><p>Least Privilege: Limit the IAM policy to only necessary permissions.</p></li><li><p>Monitor Backups: Use Velero’s Prometheus metrics (/metrics) for monitoring.</p></li><li><p>Test Restores: Periodically test restores to ensure backups are valid.</p></li><li><p>Version Control: Store values.yaml and Terraform files in a Git repository.</p></li></ul><h2 id=troubleshooting>Troubleshooting</h2><ul><li><p>Pod Identity Issues: Verify the Pod Identity association using aws eks describe-pod-identity-association.</p></li><li><p>S3 Access Errors: Check IAM role permissions and bucket policies.</p></li><li><p>Backup Failures: Use velero backup describe for detailed logs.</p></li></ul><h1 id=conclusion>Conclusion</h1><p>With Velero and EKS Pod Identity, you can securely back up your Kubernetes cluster without managing AWS credentials manually. This setup provides:</p><ul><li><p>Automated backups.</p></li><li><p>Secure IAM integration via Pod Identity.</p></li><li><p>Disaster recovery capabilities for your workloads.</p></li></ul><p>Velero makes backup and restore operations simple, portable, and secure in Kubernetes environments.</p><p><a href=/blogs/>← Back to blogs</a></p></div></body></html>
