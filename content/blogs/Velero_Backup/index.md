@@ -15,6 +15,7 @@ Data protection is a critical part of Kubernetes operations. In Amazon EKS, Vele
 
 Velero provides:
 
+
 * Backup and restore of Kubernetes objects and persistent volumes.
 
 * Disaster recovery for your workloads.
