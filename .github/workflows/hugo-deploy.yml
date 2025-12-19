@@ -32,7 +32,7 @@ jobs:
         run: touch public/.nojekyll
 
       - name: Build Hugo site
-        run: hugo --minify --gc --buildDrafts
+        run: hugo --minify --destination=public
 
       - name: Verify output
         run: ls -l public
