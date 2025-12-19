@@ -17,25 +17,18 @@ The CUR provides comprehensive metadata on services, pricing, Reserved Instances
 # Prerequisites
 Before diving in, ensure you have:
 
-* Permissions: Admin access in your Management/Payer Account for CloudFormation, CUR, Athena, Glue, IAM, Lambda, QuickSight, and S3. All roles and policies are managed via templates.
-
+* Permissions: Admin access in your Management/Payer Account for CloudFormation, CUR, Athena, Glue, IAM, Lambda, QuickSight, and S3.   All roles and policies are managed via templates.
 * AWS Setup: Enable CUR with Athena integration. For multi-payer environments, prepare a Data Collection Account.
-
 * Tools: Terraform for deployment (optional but recommended for automation), or use CloudFormation directly.
-
 * Time Considerations: CUR reports take up to 24 hours to generate; dashboard data appears shortly after.
 
 No costs beyond standard AWS usage apply. QuickSight's SPICE engine efficiently handles queries.
 
 # Architecture Overview
 * CUDOS architecture centers on CUR data flowing through a serverless pipeline:
-
 * CUR reports are delivered to an S3 bucket.
-
 * Glue crawlers index the data, creating tables in the Glue Data Catalog.
-
 * Athena runs predefined queries to generate views.
-
 * QuickSight datasets pull from these views for dashboard
 
 ![CUDOS Architecture](images/1.png)
@@ -107,9 +100,7 @@ CUDOS orchestrates several AWS services seamlessly. Here's a walkthrough:
 ## AWS QuickSight
 
 * Dashboards: Access "CUDOS Dashboard v5" for visuals.
-
 * Datasets: Sourced from Athena views; scheduled refreshes ensure freshness. Manually refresh if needed.
-
 * Data Sources: Connected to Athena workgroup "CID."
 
 
@@ -120,7 +111,6 @@ fig: CUDOS Dashboard v5
 ## AWS Athena
 
 * Workgroup: "CID" with tables and views (e.g., summary_view). Avoid deleting views.
-
 * Queries: Run SQL to explore CUR data.
 
 ![AWS Athena](images/4.png)
@@ -133,9 +123,7 @@ fig: Athena Overview
 ## AWS Glue
 
 * Databases: Contains CUR tables.
-
 * Crawlers: Scheduled to index S3 data; view IAM roles and run history.
-
 * Tables: Check schemas for partitioned data.
 
 ![AWS Glue](images/6.png)
@@ -250,9 +238,7 @@ Customize CUDOS by incorporating tags for grouping (e.g., by application or busi
 
 ## Prerequisites
 * Access to AWS Organizations.
-
 * Enable tags in Cost Explorer.
-
 * Activate AWS/user-generated tags.
 
 Changes reflect in CUR after 24 hours.
@@ -263,19 +249,14 @@ __Add Cost Categories__
 In Billing and Cost Management:
 
 1. Navigate to Cost Categories > Create.
-
 2. Define rules (e.g., by account or tag values).
-
 3. Set lookback periods if needed.
-
 4. Review and create.
 
 __Modify Queries in Athena__
 
 1. Select AwsDataCatalog and your database.
-
 2. Edit views (e.g., summary_view): Add tag columns (e.g., lineitem_resourcetags_user_silo AS silo).
-
 3. Update GROUP BY clauses.
 
 ```
@@ -291,20 +272,14 @@ Repeat for hourly_view and resource_view.
 
 __Modify Datasets in QuickSight__
 1. Edit dataset (e.g., summary_view).
-
 2. Confirm new fields.
-
 3. Save & Publish; monitor refresh.
 
 __Modify QuickSight Analysis__
 1. Save dashboard as analysis.
-
 2. Add fields to visuals (drag to Group By).
-
 3. Create parameters and controls for filtering.
-
 4. Add filters linking to parameters.
-
 5. Publish updates.
 
 This enables tag-based filtering, enhancing chargeback and optimization.
@@ -357,7 +332,6 @@ fig: Primary Tags
 
 # Best Practices and Troubleshooting
 * Tagging: Consistently tag resources for accurate breakdowns.
-
 * Monitoring: Schedule reviews; integrate with SSO for security.
 * Upgrades: Keep to v5+ for features like DynamoDB simulations.
 * Common Issues: If tags don't appear, verify Athena views and QuickSight refreshes. CUR delays are normal.
