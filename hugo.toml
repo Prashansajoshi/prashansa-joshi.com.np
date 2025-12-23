@@ -36,3 +36,7 @@ enableRobotsTXT = true
   name = "Blog"
   url = "/blogs/"
   weight = 20
+
+[build]
+  writeStats = true
+
