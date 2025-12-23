@@ -68,3 +68,44 @@ a:hover {
 .post-toc .toc-body a:hover {
   text-decoration: underline;
 }
+
+/* ================================
+   FIX TOC ALIGNMENT (LEFT)
+   ================================ */
+
+/* Override PaperMod right alignment */
+.post-content .toc {
+    float: none !important;
+    position: relative !important;
+    inset: auto !important;
+    max-width: 100% !important;
+    margin: 20px 0 !important;
+    text-align: left !important;
+}
+
+/* Kill sticky/right layout */
+.post-content .toc-container,
+.post-content aside.toc {
+    float: none !important;
+    position: static !important;
+    width: auto !important;
+}
+
+/* Bullet alignment */
+.post-content .toc ul {
+    list-style-position: inside !important;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+}
+
+.post-content .toc li {
+    margin: 6px 0;
+}
+
+/* TOC title */
+.post-content .toc summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: #58a6ff;
+}
+

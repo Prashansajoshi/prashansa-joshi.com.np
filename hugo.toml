@@ -9,6 +9,10 @@ enableRobotsTXT = true
   description = "DevOps Engineer | AWS Community Builder"
   home = "home-info"
 
+  # Disable PaperMod's built-in TOC
+  showToc = false
+  tocOpen = false
+
 [[params.social]]
   name = "GitHub"
   url = "https://github.com/prashansajoshi"
